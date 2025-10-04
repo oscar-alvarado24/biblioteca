@@ -35,9 +35,39 @@ class LendingUseCaseTest {
 
 
     @Test
-    void saveLendingSuccessfully() {
+    void saveLendingSuccessfullyWithUserAffiliate() {
         Lending lending =new Lending("ISBN398547","123456", UserType.USER_AFFILIATE);
         LocalDate limitReturnBookDate = AuxiliaryMethods.sumWorkingDays(DAYS_LENDING_USER_AFFILIATE);
+        when(lendingPersistencePort.isUserWithBookLending(lending.getUserId())).thenReturn(false);
+        when(lendingPersistencePort.saveLending(lending)).thenReturn(lending);
+
+        Lending result = lendingUseCase.saveLending(lending);
+
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(limitReturnBookDate, result.getMaxReturnDate());
+        verify(lendingPersistencePort).isUserWithBookLending(lending.getUserId());
+        verify(lendingPersistencePort).saveLending(lending);
+    }
+
+    @Test
+    void saveLendingSuccessfullyWithUserEmployee() {
+        Lending lending =new Lending("ISBN398547","123456", UserType.USER_EMPLOYEE);
+        LocalDate limitReturnBookDate = AuxiliaryMethods.sumWorkingDays(DAYS_LENDING_USER_EMPLOYEE);
+        when(lendingPersistencePort.isUserWithBookLending(lending.getUserId())).thenReturn(false);
+        when(lendingPersistencePort.saveLending(lending)).thenReturn(lending);
+
+        Lending result = lendingUseCase.saveLending(lending);
+
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(limitReturnBookDate, result.getMaxReturnDate());
+        verify(lendingPersistencePort).isUserWithBookLending(lending.getUserId());
+        verify(lendingPersistencePort).saveLending(lending);
+    }
+
+    @Test
+    void saveLendingSuccessfullyWithUserInvited() {
+        Lending lending =new Lending("ISBN398547","123456", UserType.USER_INVITED);
+        LocalDate limitReturnBookDate = AuxiliaryMethods.sumWorkingDays(DAYS_LENDING_USER_INVITED);
         when(lendingPersistencePort.isUserWithBookLending(lending.getUserId())).thenReturn(false);
         when(lendingPersistencePort.saveLending(lending)).thenReturn(lending);
 
@@ -56,5 +86,20 @@ class LendingUseCaseTest {
         assertThrows(UserWithBookLendingException.class, () -> {
             lendingUseCase.saveLending(lending);
         });
+    }
+
+    @Test
+    void getLendingSuccessfully(){
+        int lendingId = 1;
+        Lending lending =new Lending(lendingId,AuxiliaryMethods.sumWorkingDays(DAYS_LENDING_USER_INVITED),"ISBN398547","123456", UserType.USER_INVITED);
+        when(lendingPersistencePort.getLendingById(lendingId)).thenReturn(lending);
+
+        Lending result = lendingUseCase.getLendingById(lendingId);
+
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(AuxiliaryMethods.sumWorkingDays(DAYS_LENDING_USER_INVITED), result.getMaxReturnDate());
+        Assertions.assertEquals("ISBN398547",result.getIsbn());
+        Assertions.assertEquals("123456", result.getUserId());
+        verify(lendingPersistencePort).getLendingById(lendingId);
     }
 }

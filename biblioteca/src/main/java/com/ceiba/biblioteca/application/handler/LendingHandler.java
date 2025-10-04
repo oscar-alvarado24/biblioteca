@@ -1,6 +1,7 @@
 package com.ceiba.biblioteca.application.handler;
 
 import com.ceiba.biblioteca.application.dto.LendingBasicResponse;
+import com.ceiba.biblioteca.application.dto.LendingCompleteResponse;
 import com.ceiba.biblioteca.application.dto.LendingRequest;
 import com.ceiba.biblioteca.domain.exception.BadUserTypeException;
 import com.ceiba.biblioteca.application.mapper.ILendingMapper;
@@ -19,5 +20,10 @@ public class LendingHandler implements ILendingHandler{
     @Override
     public LendingBasicResponse saveLending(LendingRequest lendingRequest) {
         return lendingMapper.toLendingBasicResponse(lendingServicePort.saveLending(lendingMapper.toLending(lendingRequest)));
+    }
+
+    @Override
+    public LendingCompleteResponse getLendingById(int lendingId) {
+        return lendingMapper.toLendingCompleteResponse(lendingServicePort.getLendingById(lendingId));
     }
 }

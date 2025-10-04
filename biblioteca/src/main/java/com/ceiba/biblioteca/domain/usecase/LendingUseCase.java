@@ -43,4 +43,9 @@ public class LendingUseCase implements ILendingServicePort {
         lending.setMaxReturnDate(maxReturnDate);
         return lendingPersistencePort.saveLending(lending);
     }
+
+    @Override
+    public Lending getLendingById(int lendingId) {
+        return lendingPersistencePort.getLendingById(lendingId);
+    }
 }

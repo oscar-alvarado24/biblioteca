@@ -11,6 +11,13 @@ import lombok.Setter;
 @Setter
 public class LendingCompleteResponse extends LendingBasicResponse{
     private String isbn;
-    private String identificaciónUsuario;
+    private String identificacionUsuario;
     private int tipoUsuario;
+
+    public LendingCompleteResponse(int id, String fechaMaximaDevolucion, String isbn, String identificacionUsuario, int tipoUsuario) {
+        super(id, fechaMaximaDevolucion);
+        this.isbn = isbn;
+        this.identificacionUsuario = identificacionUsuario;
+        this.tipoUsuario = tipoUsuario;
+    }
 }

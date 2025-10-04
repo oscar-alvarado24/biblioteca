@@ -5,9 +5,9 @@ import java.time.LocalDate;
 public class Lending {
     private int id;
     private LocalDate maxReturnDate;
-    private String isbn;
-    private String userId;
-    private UserType userType;
+    private final String isbn;
+    private final String userId;
+    private final UserType userType;
 
     public Lending(String isbn, String userId, UserType userType) {
         this.isbn = isbn;
@@ -23,6 +23,9 @@ public class Lending {
         this.userType = userType;
     }
 
+    public int getId(){
+        return this.id;
+    }
     public LocalDate getMaxReturnDate() {
         return maxReturnDate;
     }
