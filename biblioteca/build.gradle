@@ -2,11 +2,37 @@ plugins {
 	id 'org.springframework.boot' version '2.2.1.RELEASE'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
+    id 'jacoco'
 }
 
 group = 'com.ceiba'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+jacoco {
+    toolVersion = "0.8.9"
+}
+
+// Configuración de las fuentes y clases para JaCoCo (excluyendo los paquetes y clases deseadas)
+jacocoTestReport {
+    dependsOn test // Ejecutar pruebas antes de generar el informe de cobertura
+    reports {
+        xml.required = false
+        csv.required = false
+        html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
+    }
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, excludes: [
+                    'com/ceiba/biblioteca/infrastructure/config/**',
+                    'com/ceiba/biblioteca/application/**',
+                    'com/ceiba/biblioteca/domain/model/**',
+                    'com/ceiba/biblioteca/BibliotecaApplication.class'
+            ])
+        }))
+    }
+}
 
 repositories {
 	mavenCentral()
@@ -16,8 +42,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
     //lombok
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
     //mapstruct
     implementation 'org.mapstruct:mapstruct:1.5.3.Final'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'

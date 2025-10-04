@@ -13,7 +13,7 @@ import org.mapstruct.ReportingPolicy;
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public interface ILendingMapper {
     default Lending toLending(LendingRequest lendingRequest){
-        return new Lending(lendingRequest.getIsbn(), lendingRequest.getIdentificaciónUsuario(), UserType.fromNumberUserType(lendingRequest.getTipoUsuario()));
+        return new Lending(lendingRequest.getIsbn(), lendingRequest.getIdentificacionUsuario(), UserType.fromNumberUserType(lendingRequest.getTipoUsuario()));
     }
     @Mapping(source = "maxReturnDate", target = "fechaMaximaDevolucion", dateFormat = "dd/MM/yyyy")
     LendingBasicResponse toLendingBasicResponse(Lending lending);

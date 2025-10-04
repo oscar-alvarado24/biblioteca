@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -21,10 +20,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class LendingController {
     private final ILendingHandler lendingHandler;
 
-    @Operation(summary = "Add a new route")
+    @Operation(summary = "Add a book leading")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Route created", content = @Content),
-            @ApiResponse(responseCode = "409", description = "Route already exists", content = @Content)
+            @ApiResponse(responseCode = "200", description = "Leading created", content = @Content),
+            @ApiResponse(responseCode = "400", description = "User with book leading active", content = @Content)
     })
     @PostMapping()
     public ResponseEntity<LendingBasicResponse> saveLending(@RequestBody LendingRequest lendingRequest){

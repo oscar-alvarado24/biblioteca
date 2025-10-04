@@ -25,7 +25,7 @@ public class LendingUseCase implements ILendingServicePort {
     @Override
     public Lending saveLending(Lending lending) {
         if(lendingPersistencePort.isUserWithBookLending(lending.getUserId())){
-            throw new UserWithBookLendingException(DomainConstants.MSG_USER_WITH_BOOK_LENDING);
+            throw new UserWithBookLendingException(String.format(DomainConstants.MSG_USER_WITH_BOOK_LENDING,lending.getUserId()));
         }
         int lendingDays = 0;
         switch (lending.getUserType()){
