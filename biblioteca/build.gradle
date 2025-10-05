@@ -3,6 +3,7 @@ plugins {
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
     id 'jacoco'
+    id "org.sonarqube" version "6.3.1.5724"
 }
 
 group = 'com.ceiba'
@@ -33,7 +34,12 @@ jacocoTestReport {
         }))
     }
 }
-
+sonar {
+    properties {
+        property "sonar.projectKey", "oscar-alvarado24_biblioteca"
+        property "sonar.organization", "oscar-alvarado24"
+    }
+}
 repositories {
 	mavenCentral()
 }

@@ -25,24 +25,23 @@ import javax.validation.Valid;
 public class LendingController {
     private final ILendingHandler lendingHandler;
 
-    @Operation(summary = "Add a book leading")
+    @Operation(summary = "Add a book lending")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Leading created", content = @Content),
-            @ApiResponse(responseCode = "400", description = "User with book leading active", content = @Content)
+            @ApiResponse(responseCode = "200", description = "Lending created", content = @Content),
+            @ApiResponse(responseCode = "400", description = "User invited with book lending active or error in the request", content = @Content)
     })
     @PostMapping()
     public ResponseEntity<LendingBasicResponse> saveLending(@Valid @RequestBody LendingRequest lendingRequest){
          return ResponseEntity.ok().body(lendingHandler.saveLending(lendingRequest));
     }
 
-    @Operation(summary = "Get a book leading")
+    @Operation(summary = "Get a book lending")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Get leading sucessfully", content = @Content),
+            @ApiResponse(responseCode = "200", description = "Get lending successfully", content = @Content),
             @ApiResponse(responseCode = "404", description = "Lending not found", content = @Content)
     })
     @GetMapping("/{id-prestamo}")
     public ResponseEntity<LendingCompleteResponse> getLendingById(@PathVariable(name = "id-prestamo")int lendingId){
         return ResponseEntity.ok().body(lendingHandler.getLendingById(lendingId));
     }
-
 }
