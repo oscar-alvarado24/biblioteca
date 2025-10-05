@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/prestamo")
@@ -29,7 +31,7 @@ public class LendingController {
             @ApiResponse(responseCode = "400", description = "User with book leading active", content = @Content)
     })
     @PostMapping()
-    public ResponseEntity<LendingBasicResponse> saveLending(@RequestBody LendingRequest lendingRequest){
+    public ResponseEntity<LendingBasicResponse> saveLending(@Valid @RequestBody LendingRequest lendingRequest){
          return ResponseEntity.ok().body(lendingHandler.saveLending(lendingRequest));
     }
 
