@@ -15,7 +15,9 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import java.time.LocalDate;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -38,14 +40,12 @@ class LendingUseCaseTest {
     void saveLendingSuccessfullyWithUserAffiliate() {
         Lending lending =new Lending("ISBN398547","123456", UserType.USER_AFFILIATE);
         LocalDate limitReturnBookDate = AuxiliaryMethods.sumWorkingDays(DAYS_LENDING_USER_AFFILIATE);
-        when(lendingPersistencePort.isUserWithBookLending(lending.getUserId())).thenReturn(false);
         when(lendingPersistencePort.saveLending(lending)).thenReturn(lending);
 
         Lending result = lendingUseCase.saveLending(lending);
 
         Assertions.assertNotNull(result);
         Assertions.assertEquals(limitReturnBookDate, result.getMaxReturnDate());
-        verify(lendingPersistencePort).isUserWithBookLending(lending.getUserId());
         verify(lendingPersistencePort).saveLending(lending);
     }
 
@@ -53,14 +53,12 @@ class LendingUseCaseTest {
     void saveLendingSuccessfullyWithUserEmployee() {
         Lending lending =new Lending("ISBN398547","123456", UserType.USER_EMPLOYEE);
         LocalDate limitReturnBookDate = AuxiliaryMethods.sumWorkingDays(DAYS_LENDING_USER_EMPLOYEE);
-        when(lendingPersistencePort.isUserWithBookLending(lending.getUserId())).thenReturn(false);
         when(lendingPersistencePort.saveLending(lending)).thenReturn(lending);
 
         Lending result = lendingUseCase.saveLending(lending);
 
         Assertions.assertNotNull(result);
         Assertions.assertEquals(limitReturnBookDate, result.getMaxReturnDate());
-        verify(lendingPersistencePort).isUserWithBookLending(lending.getUserId());
         verify(lendingPersistencePort).saveLending(lending);
     }
 
@@ -80,12 +78,26 @@ class LendingUseCaseTest {
     }
 
     @Test
-    void generateUserWithBookLendingExceptionIfUserHaveBookLending(){
-        Lending lending =new Lending("ISBN398547","123456", UserType.USER_AFFILIATE);
+    void generateUserWithBookLendingExceptionIfUserIsInvitedAndHaveBookLending(){
+        Lending lending =new Lending("ISBN398547","123456", UserType.USER_INVITED);
         when(lendingPersistencePort.isUserWithBookLending(lending.getUserId())).thenReturn(true);
-        assertThrows(UserWithBookLendingException.class, () -> {
-            lendingUseCase.saveLending(lending);
-        });
+        assertThrows(UserWithBookLendingException.class, () -> lendingUseCase.saveLending(lending));
+
+    }
+
+    @Test
+    void saveLendingSuccessfullyWithUserNotInvitedAndHaveBookLending() {
+        Lending lending =new Lending("ISBN398547","123456", UserType.USER_AFFILIATE);
+        LocalDate limitReturnBookDate = AuxiliaryMethods.sumWorkingDays(DAYS_LENDING_USER_AFFILIATE);
+        when(lendingPersistencePort.saveLending(lending)).thenReturn(lending);
+
+        Lending result = lendingUseCase.saveLending(lending);
+
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(limitReturnBookDate, result.getMaxReturnDate());
+        assertDoesNotThrow(() -> lendingUseCase.saveLending(lending));
+        verify(lendingPersistencePort,never()).isUserWithBookLending(lending.getUserId());
+
     }
 
     @Test

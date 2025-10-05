@@ -47,7 +47,6 @@ class LendingControllerTest {
 
     @Test
     void saveRequestBookLendingForUserInvitedWithOutBookLendingActive() throws Exception {
-        String dateReturn = addDaysSkippingWeekends(LocalDate.now(),DAYS_LENDING_USER_INVITED );
         mvc.perform(
                         MockMvcRequestBuilders.post(URL_SAVE)
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -55,12 +54,11 @@ class LendingControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.fechaMaximaDevolucion").exists())
-                .andExpect(jsonPath("$.fechaMaximaDevolucion",is(dateReturn)))
+                .andExpect(jsonPath("$.fechaMaximaDevolucion",is(addDaysSkippingWeekends(LocalDate.now(), DAYS_LENDING_USER_INVITED))))
                 .andReturn();
     }
     @Test
     void saveRequestBookLendingForUserEmployeeWithOutBookLendingActive() throws Exception {
-        String dateReturn = addDaysSkippingWeekends(LocalDate.now(),DAYS_LENDING_USER_EMPLOYEE );
         mvc.perform(
                         MockMvcRequestBuilders.post(URL_SAVE)
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -68,13 +66,12 @@ class LendingControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.fechaMaximaDevolucion").exists())
-                .andExpect(jsonPath("$.fechaMaximaDevolucion",is(dateReturn)))
+                .andExpect(jsonPath("$.fechaMaximaDevolucion",is(addDaysSkippingWeekends(LocalDate.now(), DAYS_LENDING_USER_EMPLOYEE))))
                 .andReturn();
     }
 
     @Test
     void saveRequestBookLendingForUserAffiliateWithOutBookLendingActive() throws Exception {
-        String dateReturn = addDaysSkippingWeekends(LocalDate.now(), DAYS_LENDING_USER_AFFILIATE);
         mvc.perform(
                 MockMvcRequestBuilders.post(URL_SAVE)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -82,29 +79,24 @@ class LendingControllerTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id").exists())
         .andExpect(jsonPath("$.fechaMaximaDevolucion").exists())
-        .andExpect(jsonPath("$.fechaMaximaDevolucion",is(dateReturn)))
+        .andExpect(jsonPath("$.fechaMaximaDevolucion",is(addDaysSkippingWeekends(LocalDate.now(), DAYS_LENDING_USER_AFFILIATE))))
         .andReturn();
     }
 
     @Test
-    void saveRequestBookLendingForUserUnknownWithBookLendingActive() throws Exception {
-
-
-            {
-                mvc.perform(
-                                MockMvcRequestBuilders.post(URL_SAVE)
-                                        .contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(new SolicitudPrestarLibroTest("ISBN7885", "974148", USER_UNKNOWN))))
-                        .andExpect(status().isBadRequest())
-                        .andExpect(jsonPath("$.mensaje").exists())
-                        .andExpect(jsonPath("$.mensaje",is("Tipo de usuario no permitido en la biblioteca")))
-                        .andReturn();
-
-        }
+    void saveRequestBookLendingForUserUnknown() throws Exception {
+            mvc.perform(
+                            MockMvcRequestBuilders.post(URL_SAVE)
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(objectMapper.writeValueAsString(new SolicitudPrestarLibroTest("ISBN7885", "974148", USER_UNKNOWN))))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.mensaje").exists())
+                    .andExpect(jsonPath("$.mensaje",is("Tipo de usuario no permitido en la biblioteca")))
+                    .andReturn();
     }
 
     @Test
-    void saveRequestBookLendingForUserAffiliateWithBookLendingActive() throws Exception {
+    void saveSuccessfullyRequestBookLendingForUserNotInvitedWithBookLendingActive() throws Exception {
         {
             mvc.perform(
                             MockMvcRequestBuilders.post(URL_SAVE)
@@ -113,6 +105,7 @@ class LendingControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.id").exists())
                     .andExpect(jsonPath("$.fechaMaximaDevolucion").exists())
+                    .andExpect(jsonPath("$.fechaMaximaDevolucion",is(addDaysSkippingWeekends(LocalDate.now(), DAYS_LENDING_USER_AFFILIATE))))
                     .andReturn();
 
 
@@ -120,6 +113,32 @@ class LendingControllerTest {
                             MockMvcRequestBuilders.post(URL_SAVE)
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(objectMapper.writeValueAsString(new SolicitudPrestarLibroTest("ISBN7885", "123456", USER_AFFILIATE))))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.id").exists())
+                    .andExpect(jsonPath("$.fechaMaximaDevolucion").exists())
+                    .andExpect(jsonPath("$.fechaMaximaDevolucion",is(addDaysSkippingWeekends(LocalDate.now(), DAYS_LENDING_USER_AFFILIATE))))
+                    .andReturn();
+        }
+    }
+
+    @Test
+    void generateExceptionWhenSaveRequestBookLendingForUserInvitedWithBookLendingActive() throws Exception {
+        {
+            mvc.perform(
+                            MockMvcRequestBuilders.post(URL_SAVE)
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(objectMapper.writeValueAsString(new SolicitudPrestarLibroTest("ISBN7884", "123456", USER_INVITED))))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.id").exists())
+                    .andExpect(jsonPath("$.fechaMaximaDevolucion").exists())
+                    .andExpect(jsonPath("$.fechaMaximaDevolucion",is(addDaysSkippingWeekends(LocalDate.now(), DAYS_LENDING_USER_INVITED))))
+                    .andReturn();
+
+
+            mvc.perform(
+                            MockMvcRequestBuilders.post(URL_SAVE)
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(objectMapper.writeValueAsString(new SolicitudPrestarLibroTest("ISBN7885", "123456", USER_INVITED))))
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.mensaje").exists())
                     .andExpect(jsonPath("$.mensaje",is("El usuario con identificación 123456 ya tiene un libro prestado por lo cual no se le puede realizar otro préstamo")))

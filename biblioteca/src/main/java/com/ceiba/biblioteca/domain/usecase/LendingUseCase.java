@@ -5,6 +5,7 @@ import com.ceiba.biblioteca.domain.exception.UserWithBookLendingException;
 import com.ceiba.biblioteca.domain.helper.AuxiliaryMethods;
 import com.ceiba.biblioteca.domain.helper.DomainConstants;
 import com.ceiba.biblioteca.domain.model.Lending;
+import com.ceiba.biblioteca.domain.model.UserType;
 import com.ceiba.biblioteca.domain.spi.ILendingPersistencePort;
 
 import java.time.LocalDate;
@@ -24,8 +25,8 @@ public class LendingUseCase implements ILendingServicePort {
      */
     @Override
     public Lending saveLending(Lending lending) {
-        if(lendingPersistencePort.isUserWithBookLending(lending.getUserId())){
-            throw new UserWithBookLendingException(String.format(DomainConstants.MSG_USER_WITH_BOOK_LENDING,lending.getUserId()));
+        if(UserType.USER_INVITED.equals(lending.getUserType()) && lendingPersistencePort.isUserWithBookLending(lending.getUserId())) {
+                throw new UserWithBookLendingException(String.format(DomainConstants.MSG_USER_WITH_BOOK_LENDING, lending.getUserId()));
         }
         int lendingDays = 0;
         switch (lending.getUserType()){
